@@ -29,6 +29,7 @@
         <httpclient.version>4.3.1</httpclient.version>
         <jedis.version>2.9.0</jedis.version>
         <zkclient.version>0.10</zkclient.version>
+        <curator.version>4.0.0</curator.version>
     </properties>
 
     <dependencyManagement>
@@ -57,6 +58,11 @@
                 <groupId>com.101tec</groupId>
                 <artifactId>zkclient</artifactId>
                 <version>${zkclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
