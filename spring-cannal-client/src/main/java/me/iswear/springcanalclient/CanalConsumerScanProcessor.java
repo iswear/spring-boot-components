@@ -14,6 +14,10 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class CanalConsumerScanProcessor implements BeanPostProcessor, BeanFactoryAware, ApplicationListener<ContextRefreshedEvent> {
@@ -24,6 +28,10 @@ public class CanalConsumerScanProcessor implements BeanPostProcessor, BeanFactor
 
     private List<CanalConnectorManager> canalConnectorManagers = Collections.synchronizedList(new LinkedList<>());
 
+    private ExecutorService executorPool;
+
+    private CanalClientConfig clientConfig;
+
     @Override
     public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
         return o;
@@ -31,14 +39,18 @@ public class CanalConsumerScanProcessor implements BeanPostProcessor, BeanFactor
 
     @Override
     public Object postProcessAfterInitialization(Object o, String s) throws BeansException {
-        Method[] methods = o.getClass().getMethods();
-        if (methods != null) {
-            for (Method method : methods) {
-                CanalListener listener = method.getAnnotation(CanalListener.class);
-                if (listener != null) {
-                    this.canalConsumers.add(new CanalConsumer(o, method));
+        Class superClass = o.getClass();
+        while (superClass != null) {
+            Method[] methods = superClass.getDeclaredMethods();
+            if (methods != null) {
+                for (Method method : methods) {
+                    CanalListener listener = method.getAnnotation(CanalListener.class);
+                    if (listener != null) {
+                        this.canalConsumers.add(new CanalConsumer(o, method));
+                    }
                 }
             }
+            superClass = superClass.getSuperclass();
         }
         return o;
     }
@@ -67,6 +79,14 @@ public class CanalConsumerScanProcessor implements BeanPostProcessor, BeanFactor
             }
         }
         try {
+            this.clientConfig = this.beanFactory.getBean(CanalClientConfig.class);
+            this.executorPool = new ThreadPoolExecutor(
+                    this.clientConfig.getPoolCoreSize(),
+                    this.clientConfig.getPoolMaxSize(),
+                    0L,
+                    TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<Runnable>()
+            );
             this.startConsumer();
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -77,10 +97,7 @@ public class CanalConsumerScanProcessor implements BeanPostProcessor, BeanFactor
 
 
     public void addCanalConnectorManager(CanalConnector connector, CanalConsumer consumer) {
-        if (connector == null) {
-            throw new NullPointerException();
-        }
-        if (connector == null) {
+        if (connector == null || consumer == null) {
             throw new NullPointerException();
         }
         for (CanalConnectorManager manager : canalConnectorManagers) {
@@ -96,16 +113,21 @@ public class CanalConsumerScanProcessor implements BeanPostProcessor, BeanFactor
     }
 
     public void startConsumer() throws InvocationTargetException, IllegalAccessException {
-        while (true) {
-            for (CanalConnectorManager manager : this.canalConnectorManagers) {
-                manager.consumeMessageByConsumers();
+        this.executorPool.execute(() -> {
+            while (true) {
+                for (CanalConnectorManager manager : canalConnectorManagers) {
+                    this.executorPool.execute(() -> {
+                        try {
+                            manager.consumeMessageByConsumers();
+                        } catch (InvocationTargetException e) {
+                            log.error("", e);
+                        } catch (IllegalAccessException e) {
+                            log.error("", e);
+                        }
+                    });
+                }
             }
-            try {
-                Thread.sleep(500);
-            } catch (Exception ex) {
-                log.error("CANEL消费程序处于非正常状态", ex);
-            }
-        }
+        });
     }
 
 }

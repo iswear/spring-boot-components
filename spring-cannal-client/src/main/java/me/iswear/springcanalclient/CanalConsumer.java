@@ -21,7 +21,7 @@ public class CanalConsumer {
         this.method = method;
     }
 
-    public void consumerCancelMessage(CanalConnector connector, Message message) throws InvocationTargetException, IllegalAccessException {
+    public boolean consumerCancelMessage(CanalConnector connector, Message message) throws InvocationTargetException, IllegalAccessException {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null && parameterTypes.length > 0) {
             List<Object> parameters = new LinkedList<>();
