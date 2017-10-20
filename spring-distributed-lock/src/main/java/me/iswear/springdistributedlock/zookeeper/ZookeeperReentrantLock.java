@@ -1,4 +1,6 @@
-package me.iswear.springdistributedlock;
+package me.iswear.springdistributedlock.zookeeper;
+
+import me.iswear.springdistributedlock.Lock;
 
 public class ZookeeperReentrantLock implements Lock {
 
