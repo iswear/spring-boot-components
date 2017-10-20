@@ -11,8 +11,9 @@ public class CanalClientAutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "HyCanalClient")
-    public CanalClientConfig injectCanalClientConfig() {
-        return new CanalClientConfig();
+    public CanalClientConfig injectCanalClientConfig(CanalConsumerScanProcessor processor) {
+        processor.setClientConfig(new CanalClientConfig());
+        return processor.getClientConfig();
     }
 
 }

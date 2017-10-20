@@ -19,4 +19,6 @@ public class CanalClientConfig implements Serializable {
 
     private int poolMaxSize;
 
+    private int batchSize;
+
 }
