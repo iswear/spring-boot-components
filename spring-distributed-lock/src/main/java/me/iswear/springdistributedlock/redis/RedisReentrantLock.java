@@ -1,91 +1,96 @@
 package me.iswear.springdistributedlock.redis;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import me.iswear.springdistributedlock.Lock;
-import me.iswear.springdistributedlock.ThreadUtils;
-import redis.clients.jedis.Jedis;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
+@Slf4j
+@Data
 public class RedisReentrantLock implements Lock {
 
-    private ExecutorService holdPoolExecutor;
+    private ThreadPoolExecutor keepLockPoolExecutor;
 
+    private ScheduledThreadPoolExecutor scheduledPoolExecutor;
 
+    private RedisLockHandler redisLockHandler;
 
+    private RedisReentrantLockConfig config;
 
+    private Map<String, Long> lockMap = new ConcurrentHashMap<>();
 
+    private ReentrantLock scheduledPoolExecutorLock = new ReentrantLock();
 
-//    private static Map<String, RedisReentrantLock> lockMap = new ConcurrentHashMap<>();
-//
-//    {
-//        (new Thread(() -> {
-//            while (true) {
-//                Set<String> keys = lockMap.keySet();
-//                for (String key : keys) {
-//                    RedisReentrantLock lock = lockMap.get(key);
-//                    if (ThreadUtils.isThreadAlive(lock.threadId)) {
-//                        lock.jedis.expire(lock.key, 5);
-//                    } else {
-//                        lock.jedis.del(lock.key);
-//                    }
-//                }
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        })).start();
-//    }
-//
-//    private Jedis jedis;
-//
-//    private String key;
-//
-//    private long threadId;
-//
-//    public RedisReentrantLock(Jedis jedis, String key) {
-//        this.jedis = jedis;
-//        this.key = key;
-//        this.threadId = Thread.currentThread().getId();
-//    }
-//
-//    @Override
-//    public void Lock() {
-//        while (this.jedis.incr(key) != 1) {
-//            RedisReentrantLock lock = lockMap.get(key);
-//            if (lock.threadId == Thread.currentThread().getId()) {
-//                break;
-//            } else {
-//                try {
-//                    Thread.sleep(10);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//        this.jedis.expire(key, 5);
-//        lockMap.put(key, this);
-//    }
-//
-//    @Override
-//    public boolean tryLock() {
-//        if (this.jedis.incr(key) == 1) {
-//            lockMap.put(key, this);
-//            this.jedis.expire(key, 5);
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    @Override
-//    public void unLock() {
-//        this.jedis.del(this.key);
-//    }
+    private void dispatchKeepLockTask() {
+        this.scheduledPoolExecutor.schedule(
+                () -> {
+                    if (scheduledPoolExecutorLock.tryLock()) {
+                        try {
+                            Set<Map.Entry<String, Long>> entries = lockMap.entrySet();
+                            for (Map.Entry<String, Long> entry : entries) {
+                                keepLockPoolExecutor.execute(() -> redisLockHandler.keepLockOfKey(entry.getKey(), 10));
+                            }
+                        } finally {
+                            scheduledPoolExecutorLock.unlock();
+                        }
+                    }
+                    dispatchKeepLockTask();
+                },
+                config.getLockKeepInterval(),
+                TimeUnit.SECONDS
+        );
+    }
+
+    public void initLockEnvironment() {
+        if (keepLockPoolExecutor == null) {
+            this.keepLockPoolExecutor = new ThreadPoolExecutor(
+                    this.config.getCorePoolSize(),
+                    this.config.getLockTimeOut(),
+                    0,
+                    TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<>()
+            );
+        }
+        if (scheduledPoolExecutor == null) {
+            this.scheduledPoolExecutor = new ScheduledThreadPoolExecutor(1);
+        }
+        this.dispatchKeepLockTask();
+    }
+
+    @Override
+    public void Lock(String key) {
+        while (!this.redisLockHandler.getLockOfKey(key, 10)) {
+            Long threadId = this.lockMap.get(key);
+            if (threadId != null && threadId == Thread.currentThread().getId()) {
+                break;
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                log.error("线程中断异常", e);
+            }
+        }
+        this.lockMap.put(key, Thread.currentThread().getId());
+    }
+
+    @Override
+    public boolean tryLock(String key) {
+        if (this.redisLockHandler.getLockOfKey(key, 10)) {
+            this.lockMap.put(key, Thread.currentThread().getId());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void unLock(String key) {
+        this.redisLockHandler.releaseLockOfKey(key);
+        this.lockMap.remove(key);
+    }
 
 }

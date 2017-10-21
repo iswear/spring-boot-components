@@ -2,10 +2,10 @@ package me.iswear.springdistributedlock;
 
 public interface Lock {
 
-    void Lock();
+    void Lock(String key);
 
-    boolean tryLock();
+    boolean tryLock(String key);
 
-    void unLock();
+    void unLock(String key);
 
 }
