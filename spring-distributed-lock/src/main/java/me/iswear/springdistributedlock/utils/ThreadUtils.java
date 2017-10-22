@@ -1,4 +1,4 @@
-package me.iswear.springdistributedlock;
+package me.iswear.springdistributedlock.utils;
 
 import java.lang.management.ManagementFactory;
 

@@ -30,6 +30,7 @@
         <jedis.version>2.9.0</jedis.version>
         <zkclient.version>0.10</zkclient.version>
         <curator.version>4.0.0</curator.version>
+        <commons-codec.version>1.10</commons-codec.version>
     </properties>
 
     <dependencyManagement>
@@ -43,6 +44,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
