@@ -1,4 +1,4 @@
-package me.iswear.springdistributedlock.redis;
+package me.iswear.springdistributedlock.redis.impl;
 
 import lombok.Data;
 

@@ -2,6 +2,9 @@ package me.iswear.springdistributedlock.redis;
 
 import me.iswear.springdistributedlock.CacheLockCallBack;
 import me.iswear.springdistributedlock.exception.LockExpiredException;
+import me.iswear.springdistributedlock.redis.impl.AbstractRedisLockHandler;
+import me.iswear.springdistributedlock.redis.impl.RedisReentrantLock;
+import me.iswear.springdistributedlock.redis.impl.RedisReentrantLockConfig;
 import org.junit.Before;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;

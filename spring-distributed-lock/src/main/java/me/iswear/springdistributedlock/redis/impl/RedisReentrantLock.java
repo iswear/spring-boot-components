@@ -1,4 +1,4 @@
-package me.iswear.springdistributedlock.redis;
+package me.iswear.springdistributedlock.redis.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import me.iswear.springdistributedlock.CacheLock;
 import me.iswear.springdistributedlock.CacheLockCallBack;
 import me.iswear.springdistributedlock.exception.LockException;
 import me.iswear.springdistributedlock.exception.LockExpiredException;
+import me.iswear.springdistributedlock.redis.RedisLockHandler;
 import me.iswear.springdistributedlock.utils.NetWorkUtils;
 
 import java.net.SocketException;

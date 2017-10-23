@@ -1,4 +1,6 @@
-package me.iswear.springdistributedlock.redis;
+package me.iswear.springdistributedlock.redis.impl;
+
+import me.iswear.springdistributedlock.redis.RedisLockHandler;
 
 public abstract class AbstractRedisLockHandler implements RedisLockHandler {
 
