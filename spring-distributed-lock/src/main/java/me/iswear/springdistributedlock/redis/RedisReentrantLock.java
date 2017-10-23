@@ -33,7 +33,7 @@ public class RedisReentrantLock implements Lock {
     private ReentrantLock scheduledPoolExecutorLock = new ReentrantLock();
 
     private String generateLockCacheContent(Long threadId) throws SocketException {
-        return NetWorkUtils.getHardwareAddressHexStringByIndex(0) + splitChar + threadId;
+        return NetWorkUtils.getFirstAvailableHardwareAddressHexString() + splitChar + threadId;
     }
 
     private void dispatchKeepLockTask() {
@@ -85,7 +85,6 @@ public class RedisReentrantLock implements Lock {
     }
 
     public void initLockEnvironment() {
-        this.keepLockPoolExecutor.shutdown();
         if (keepLockPoolExecutor == null) {
             this.keepLockPoolExecutor = new ThreadPoolExecutor(
                     this.config.getCorePoolSize(),

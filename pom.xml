@@ -31,6 +31,7 @@
         <zkclient.version>0.10</zkclient.version>
         <curator.version>4.0.0</curator.version>
         <commons-codec.version>1.10</commons-codec.version>
+        <junit.version>4.10</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +70,12 @@
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
