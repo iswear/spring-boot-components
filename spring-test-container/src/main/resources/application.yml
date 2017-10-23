@@ -1,0 +1,14 @@
+
+CanalConnectorConfig:
+  address:
+    host: 127.0.0.1
+    port: 6379
+  destination: feafe
+  username: fefee
+  password: fefee
+
+
+CanalClientConfig:
+  poolCoreSize: 1
+  poolMaxSize: 10
+  batchSize: 100
