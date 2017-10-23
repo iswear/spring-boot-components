@@ -1,6 +1,6 @@
 package me.iswear.springdistributedlock.redis;
 
-import me.iswear.springdistributedlock.LockCallBack;
+import me.iswear.springdistributedlock.CacheLockCallBack;
 import me.iswear.springdistributedlock.exception.LockExpiredException;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,7 +88,7 @@ public class RedisReentrantLockTest {
             @Override
             public void run() {
                 try {
-                    lock.lock("aaa", new LockCallBack() {
+                    lock.lock("aaa", new CacheLockCallBack() {
                         @Override
                         public void onLockExpiredException(Throwable throwable) {
                             System.out.println("lock expired");

@@ -2,8 +2,8 @@ package me.iswear.springdistributedlock.redis;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import me.iswear.springdistributedlock.Lock;
-import me.iswear.springdistributedlock.LockCallBack;
+import me.iswear.springdistributedlock.CacheLock;
+import me.iswear.springdistributedlock.CacheLockCallBack;
 import me.iswear.springdistributedlock.exception.LockException;
 import me.iswear.springdistributedlock.exception.LockExpiredException;
 import me.iswear.springdistributedlock.utils.NetWorkUtils;
@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @Data
-public class RedisReentrantLock implements Lock {
+public class RedisReentrantLock implements CacheLock {
 
     private static final String splitChar = "#";
 
@@ -101,7 +101,7 @@ public class RedisReentrantLock implements Lock {
     }
 
     @Override
-    public void lock(String key, LockCallBack callBack) throws LockExpiredException {
+    public void lock(String key, CacheLockCallBack callBack) throws LockExpiredException {
         try {
             String lockContent =  this.generateLockCacheContent(Thread.currentThread().getId());
             while (!this.redisLockHandler.getLockOfKey(key, lockContent, config.getLockTimeOut())) {
@@ -131,7 +131,7 @@ public class RedisReentrantLock implements Lock {
     }
 
     @Override
-    public boolean tryLock(String key, LockCallBack callBack) throws LockExpiredException {
+    public boolean tryLock(String key, CacheLockCallBack callBack) throws LockExpiredException {
         try {
             String lockContent = this.generateLockCacheContent(Thread.currentThread().getId());
             if (this.redisLockHandler.getLockOfKey(key, lockContent, config.getLockTimeOut())) {
@@ -185,9 +185,9 @@ public class RedisReentrantLock implements Lock {
 
         private long threadId;
 
-        private LockCallBack callBack;
+        private CacheLockCallBack callBack;
 
-        public LockInfo(long threadId, LockCallBack callBack) {
+        public LockInfo(long threadId, CacheLockCallBack callBack) {
             this.threadId = threadId;
             this.callBack = callBack;
         }
