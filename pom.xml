@@ -11,6 +11,7 @@
     <modules>
         <module>spring-canal-client</module>
         <module>spring-distributed-lock</module>
+        <module>spring-excel-tool</module>
     </modules>
 
     <parent>
