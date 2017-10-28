@@ -113,7 +113,6 @@ public class RedisReentrantLock implements CacheLock {
                         if (lockContent.equals(cacheLockContent)) {
                             break;
                         } else {
-                            this.lockMap.remove(key);
                             new LockExpiredException("LockKey(" + key + ")已过期");
                         }
                     }
@@ -146,7 +145,6 @@ public class RedisReentrantLock implements CacheLock {
                         if (lockContent.equals(cacheLockContent)) {
                             return true;
                         } else {
-                            this.lockMap.remove(key);
                             throw new LockExpiredException("LockKey(" + key + ")已过期");
                         }
                     } else {
@@ -169,8 +167,8 @@ public class RedisReentrantLock implements CacheLock {
                 String lockContent = this.generateLockCacheContent(lockInfo.getThreadId());
                 String cacheLockContent = redisLockHandler.getLockContentOfKey(key);
                 if (lockContent.equals(cacheLockContent)) {
-                    this.redisLockHandler.releaseLockOfKey(key);
                     this.lockMap.remove(key);
+                    this.redisLockHandler.releaseLockOfKey(key);
                 } else {
                     this.lockMap.remove(key);
                     throw new LockExpiredException("LockKey(" + key + ")已过期");

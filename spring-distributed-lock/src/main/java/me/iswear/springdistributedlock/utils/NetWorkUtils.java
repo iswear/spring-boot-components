@@ -12,6 +12,11 @@ import java.util.Enumeration;
  */
 public class NetWorkUtils {
 
+    /**
+     * 获取第一块网卡物理地址
+     * @return
+     * @throws SocketException
+     */
     public static String getFirstAvailableHardwareAddressHexString() throws SocketException {
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {

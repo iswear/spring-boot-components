@@ -1,11 +1,21 @@
 package me.iswear.springexceltool.excel;
 
-import java.util.List;
+import lombok.Data;
 
-public class T ExcelSheet<? extends T> {
+@Data
+public class ExcelSheet<T> {
 
-    private Object entityType;
+    private Class<T> entityType;
 
-    private List<Object> datas;
+    private RowsRequestHandler rowsRequestHandler;
+
+    public ExcelSheet(Class<T> entityType, RowsRequestHandler rowsRequestHandler) {
+        this.entityType = entityType;
+        this.rowsRequestHandler = rowsRequestHandler;
+    }
+
+    interface RowsRequestHandler {
+        boolean requestRows();
+    }
 
 }
