@@ -2,11 +2,14 @@ package me.iswear.springexceltool.annotation;
 
 import java.lang.annotation.*;
 
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
+/**
+ * Created by iswear on 2017/10/28.
+ */
 @Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface ExcelEntity {
 
-    String title() default "sheet";
+    String dataFormatter() default "yyyy-MM-dd HH:mm:ss";
 
 }

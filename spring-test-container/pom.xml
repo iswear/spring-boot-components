@@ -43,6 +43,11 @@
             <artifactId>spring-canal-client</artifactId>
             <version>${spring-canal-client.version}</version>
         </dependency>
+		<dependency>
+			<groupId>me.iswear</groupId>
+			<artifactId>spring-excel-tool</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
     </dependencies>
 
 	<build>
