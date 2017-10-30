@@ -6,6 +6,7 @@ import me.iswear.springexceltool.annotation.ExcelEntity;
 import me.iswear.springexceltool.annotation.ExcelField;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class AbstractExcelSheetDataProvider<T> {
                 type = type.getSuperclass();
             }
         }
-        columnInfos.sort(new Comparator<ColumnInfo>() {
+        Collections.sort(columnInfos, new Comparator<ColumnInfo>() {
             @Override
             public int compare(ColumnInfo o1, ColumnInfo o2) {
                 return o1.excelField.column() - o2.excelField.column();

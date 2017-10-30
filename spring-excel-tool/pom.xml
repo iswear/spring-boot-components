@@ -13,6 +13,7 @@
     <packaging>jar</packaging>
 
     <properties>
+        <maven.test.skip>true</maven.test.skip>
         <freemarker.version>2.3.23</freemarker.version>
         <poi.version>3.16</poi.version>
     </properties>
