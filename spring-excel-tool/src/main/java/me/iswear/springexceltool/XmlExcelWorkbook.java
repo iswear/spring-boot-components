@@ -23,8 +23,7 @@ public class XmlExcelWorkbook extends AbstractExcelWorkbook {
         configuration = new Configuration(Configuration.VERSION_2_3_0);
         configuration.setDefaultEncoding("utf-8");
         configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        configuration.setTemplateLoader(new ClassTemplateLoader(XmlExcelWorkbook.class.getClassLoader(), "ExcelTpl"));
-        //        configuration.setClassForTemplateLoading(XmlExcelWorkbook.class, "ExcelTpl");
+        configuration.setTemplateLoader(new ClassTemplateLoader(XmlExcelWorkbook.class.getClassLoader(), "templates/ExcelTpl"));
     }
 
 
