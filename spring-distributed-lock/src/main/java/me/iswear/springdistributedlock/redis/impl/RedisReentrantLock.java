@@ -163,14 +163,13 @@ public class RedisReentrantLock implements CacheLock {
     public void unLock(String key) throws LockExpiredException {
         try {
             LockInfo lockInfo = this.lockMap.get(key);
+            this.lockMap.remove(key);
             if (lockInfo != null) {
                 String lockContent = this.generateLockCacheContent(lockInfo.getThreadId());
                 String cacheLockContent = redisLockHandler.getLockContentOfKey(key);
                 if (lockContent.equals(cacheLockContent)) {
-                    this.lockMap.remove(key);
                     this.redisLockHandler.releaseLockOfKey(key);
                 } else {
-                    this.lockMap.remove(key);
                     throw new LockExpiredException("LockKey(" + key + ")已过期");
                 }
             }

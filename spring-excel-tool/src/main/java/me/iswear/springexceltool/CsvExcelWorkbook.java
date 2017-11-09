@@ -29,6 +29,11 @@ public class CsvExcelWorkbook extends AbstractExcelWorkbook {
         }
     }
 
+    private String wrapperCellContent(String value) {
+        return "\"" + value + "\"";
+//        return value;
+    }
+
     @Override
     public AbstractExcelWorkbook addExcelSheet(String title, AbstractExcelSheetDataProvider dataProvider) throws IOException, TemplateException, IllegalAccessException {
         Type tempType = dataProvider.getClass().getGenericSuperclass();
@@ -51,7 +56,7 @@ public class CsvExcelWorkbook extends AbstractExcelWorkbook {
                     }
                     ColumnInfo columnInfo = columnInfoMap.get(i);
                     if (columnInfo != null) {
-                        this.getOs().write(StringEscapeUtils.escapeCsv(columnInfo.getExcelField().title()).getBytes("utf-8"));
+                        this.getOs().write(this.wrapperCellContent(StringEscapeUtils.escapeCsv(columnInfo.getExcelField().title())).getBytes("utf-8"));
                     }
                 }
                 this.getOs().write(NEWLINE_CHAR.getBytes("utf-8"));
@@ -70,9 +75,9 @@ public class CsvExcelWorkbook extends AbstractExcelWorkbook {
                                     Object fieldValue = columnInfo.getField().get(data);
                                     if (fieldValue != null) {
                                         if (Date.class.isAssignableFrom(columnInfo.getField().getType())) {
-                                            this.getOs().write(StringEscapeUtils.escapeCsv(DateFormatUtils.format((Date) fieldValue, sheetInfo.getExcelEntity().dataFormatter())).getBytes("utf-8"));
+                                            this.getOs().write(this.wrapperCellContent(StringEscapeUtils.escapeCsv(DateFormatUtils.format((Date) fieldValue, sheetInfo.getExcelEntity().dataFormatter()))).getBytes("utf-8"));
                                         } else {
-                                            this.getOs().write(StringEscapeUtils.escapeCsv(String.valueOf(fieldValue)).getBytes("utf-8"));
+                                            this.getOs().write(this.wrapperCellContent(StringEscapeUtils.escapeCsv(String.valueOf(fieldValue))).getBytes("utf-8"));
                                         }
                                     }
                                 }
