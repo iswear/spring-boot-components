@@ -1,8 +1,5 @@
 package me.iswear.springexceltool;
 
-import me.iswear.springexceltool.excel.POIExcelWorkbook;
-import me.iswear.springexceltool.excel.XMLExcelWorkbook;
-
 import java.io.OutputStream;
 
 /**
@@ -10,12 +7,16 @@ import java.io.OutputStream;
  */
 public class ExcelUtil {
 
-    public static POIExcelWorkbook createPOIExcelWorkbook(OutputStream os) {
-        return new POIExcelWorkbook(os);
+    public static PoiExcelWorkbook createPOIExcelWorkbook(OutputStream os) {
+        return new PoiExcelWorkbook(os);
     }
 
-    public static XMLExcelWorkbook createXMLExcelWorkbook(OutputStream os) {
-        return new XMLExcelWorkbook(os);
+    public static XmlExcelWorkbook createXMLExcelWorkbook(OutputStream os) {
+        return new XmlExcelWorkbook(os);
+    }
+
+    public static CsvExcelWorkbook createCSVExcelWorkbook(OutputStream os) {
+        return new CsvExcelWorkbook(os);
     }
 
 }

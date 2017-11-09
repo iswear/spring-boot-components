@@ -3,7 +3,7 @@ package me.iswear.springtestcontainer;
 import me.iswear.springexceltool.ExcelUtil;
 import me.iswear.springexceltool.annotation.ExcelEntity;
 import me.iswear.springexceltool.annotation.ExcelField;
-import me.iswear.springexceltool.excel.AbstractExcelSheetDataProvider;
+import me.iswear.springexceltool.AbstractExcelSheetDataProvider;
 import org.junit.Test;
 
 import java.io.File;
